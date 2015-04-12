@@ -1,0 +1,111 @@
+
+
+	 
+	/*****************************************************************************************
+	 * @file  LibraryTupleGenerator.java
+	 *
+	 * @author   Sadiq Charaniya, John Miller, Daniel Ricks
+	 */
+
+	import static java.lang.System.out;
+	import java.io.*;
+	import java.io.*;
+	/*****************************************************************************************
+	 * This class tests the TupleGenerator on the Student Registration Database defined in the
+	 * Kifer, Bernstein and Lewis 2006 database textbook (see figure 3.6).  The primary keys
+	 * (see figure 3.6) and foreign keys (see example 3.2.2) are as given in the textbook.
+	 */
+	public class LibraryTupleGenerator 
+	{
+	    /*************************************************************************************
+	     * The main method is the driver for TestGenerator.
+	     * @param args  the command-line arguments
+	     */
+	    public static void main (String [] args)
+	    {
+	        TupleGenerator test = new TupleGeneratorImpl ();
+	        
+	        test.addRelSchema ("Users",
+	                           "email password employee",
+	                           "String String Boolean",
+	                           "email",
+	                           null);
+	        
+	        test.addRelSchema ("Books",
+	                           "isbn author category title available shelf",
+	                           "Integer Name Category Title Short Long",
+	                           "isbn",
+	                           null);
+	        
+	        test.addRelSchema ("Borrowers",
+	                           "cardno name city email",
+	                           "Integer Name String String",
+	                           "cardno",
+	                           new String [][] {{ "email", "Users", "email"}});
+	        
+	        test.addRelSchema ("Checked Out",
+	                           "isbn cardno date",
+	                           "Integer Integer String",
+	                           "isbn cardno",
+	                           new String [][] {{ "isbn", "Books", "isbn" },
+	                                            { "cardno", "Borrowers", "cardno" }});
+
+
+	        String [] tables = { "Users", "Books", "Borrowers", "Checked Out" };
+	        
+	        int tups [] = new int [] {1000, 10000, 250, 400,  };
+	    
+	        Comparable [][][] resultTest = test.generate (tups);
+	        
+	        /*for (int i = 0; i < resultTest.length; i++) {
+	            out.println (tables [i]);
+	            for (int j = 0; j < resultTest [i].length; j++) {
+	                for (int k = 0; k < resultTest [i][j].length; k++) {
+	                    out.print (resultTest [i][j][k] + ",");
+	                } // for
+	                out.println ();
+	            } // for
+	            out.println ();
+	        } // for
+	        */
+	        Table Users = new Table("Users", "email password employee", "String String Boolean", "email");
+	        for(int j = 0; j < resultTest[0].length; j++){
+	        	Users.insert(resultTest[0][j]);
+	        }
+	        
+	        Users.print();
+	        Table Books = new Table("Books", "isbn author category title available shelf",
+                    "Integer String String String Integer Integer",
+                    "isbn");
+	        for(int j = 0; j < resultTest[1].length; j++){
+	        	Books.insert(resultTest[1][j]);
+	        }
+	        Books.print();
+	        /*
+	        //Transcript.print();
+	        long startTime = System.nanoTime();
+	        Table newTable  = Student.join("id", "studId", Transcript);
+	        long endTime = System.nanoTime();
+	        
+	        long totalTime = (endTime - startTime)/1000000;
+	        newTable.print();
+	        out.println("Time for join: " + totalTime + " ms");
+	        */
+	        Table Borrowers = new Table("Borrowers", "cardno name city email",
+                    "Integer String String String",
+                    "cardno");
+	        for(int j = 0; j < resultTest[2].length; j++){
+	        	Borrowers.insert(resultTest[2][j]);
+	        }
+	        Borrowers.print();
+	        
+	       Table CheckedOut = new Table("Checked Out", "isbn cardno date",
+                   "Integer Integer String",
+                   "isbn cardno");
+	       for(int j = 0; j < resultTest[3].length; j++){
+	    	   CheckedOut.insert(resultTest[3][j]);
+	       }
+	       CheckedOut.print();
+	    } // main
+
+} // TestTupleGenerator
