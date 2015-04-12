@@ -1,0 +1,442 @@
+
+/*****************************************************************************************
+ * @file  TupleGeneratorImpl
+ *
+ * @author   Sadiq Charaniya, John Miller
+ */
+
+import static java.lang.System.out;
+import java.util.*;
+
+/*****************************************************************************************
+ * This class is used to populate a database (collection of tables) with randomly
+ * generated values that satisfy the following integrity constraints: domain, primary
+ * keys and foreign key constraints.
+ */
+public class TupleGeneratorImpl
+       implements TupleGenerator
+{
+    /** Counter for table numbers
+     */
+    private int counter = 0;
+
+    /** Initializations 
+     */
+    private HashMap <String, Comparable [][]> result = new HashMap <> ();
+
+    private HashMap <Integer, String> tableIndex = new HashMap <> ();
+
+    private HashMap <String, String []> tableAttr = new HashMap <> ();
+
+    private HashMap <String, String []> tableDomain = new HashMap <> ();
+
+    private HashMap <String, String []> tablepks = new HashMap <> ();
+
+    HashMap <String, String [][]> tablefks = new HashMap <> ();
+    
+    private String[] categories = {"Fiction", "NonFiction", "Romance", "Mystery", "Science Fiction", "Fantasy", "Horror", "History", "Educational", "TextBook"};
+    private String[] firstNames = {"Sophia ","Emma ","Olivia ","Isabella ","Mia ","Ava ","Lily ","Zoe ","Emily ",
+    		"Chloe ","Layla ","Madison ","Madelyn ","Abigail ","Aubrey ","Charlotte ","Amelia ","Ella ","Kaylee ",
+    		"Avery ","Aaliyah ","Hailey ","Hannah ","Addison ","Riley ","Harper ","Aria ","Arianna ","Mackenzie ",
+    		"Lila ","Evelyn ","Adalyn ","Grace ","Brooklyn ","Ellie ","Anna ","Kaitlyn ","Isabelle ",
+    		"Sophie ","Scarlett ","Natalie ","Leah ","Sarah ","Nora ","Mila ","Elizabeth ","Lillian ",
+    		"Kylie ","Audrey ","Lucy ","Maya ","Annabelle ","Makayla ","Gabriella ","Elena ","Victoria ",
+    		"Claire ","Savannah ","Peyton ","Maria ","Alaina ","Kennedy ","Stella ","Liliana ","Allison ",
+    		"Samantha ","Keira ","Alyssa ","Reagan ","Molly ","Alexandra ","Violet ","Charlie ","Julia ",
+    		"Sadie ","Ruby ","Eva ","Alice ","Eliana ","Taylor ","Callie ","Penelope ","Camilla ",
+    		"Bailey ","Kaelyn ","Alexis ","Kayla ","Katherine ","Sydney ","Lauren ","Jasmine ","London ",
+    		"Bella ","Adeline ","Caroline ","Vivian ","Juliana ","Gianna ","Skyler ","Jordyn ","Jackson ",
+    		"Aiden ","Liam ","Lucas ","Noah ","Mason ","Jayden ","Ethan ","Jacob ","Jack ","Caden ",
+    		"Logan ","Benjamin ","Michael ","Caleb ","Ryan ","Alexander ","Elijah ","James ","William ",
+    		"Oliver ","Connor ","Matthew ","Daniel ","Luke ","Brayden ","Jayce ","Henry ","Carter ",
+    		"Dylan ","Gabriel ","Joshua ","Nicholas ","Isaac ","Owen ","Nathan ","Grayson ","Eli ",
+    		"Landon ","Andrew ","Max ","Samuel ","Gavin ","Wyatt ","Christian ","Hunter ","Cameron ",
+    		"Evan ","Charlie ","David ","Sebastian ","Joseph ","Dominic ","Anthony ","Colton ","John ",
+    		"Tyler ","Zachary ","Thomas ","Julian ","Levi ","Adam ","Isaiah ","Alex ","Aaron ","Parker ",
+    		"Cooper ","Miles ","Chase ","Muhammad ","Christopher ","Blake ","Austin ","Jordan ","Leo ",
+    		"Jonathan ","Adrian ","Colin ","Hudson ","Ian ","Xavier ","Camden ","Tristan ","Carson ",
+    		"Jason ","Nolan ","Riley ","Lincoln ","Brody ","Bentley ","Nathaniel ","Josiah ","Declan ",
+    		"Jake ","Asher ","Jeremiah ","Cole ","Mateo ","Micah ","Elliot "};
+    private String[] lastNames = {"Smith ", "Jones ", "Taylor  ","Williams ","Brown ","Davies ","Evans ",
+    		"Wilson ","Thomas ","Roberts ","Johnson ","Lewis ","Walker ","Robinson ","Wood ","Thompson ",
+    		"White ","Watson ","Jackson ","Wright ","Green ","Harris ","Cooper ","King ","Lee ","Martin ",
+    		"Clarke ","James ","Morgan ","Hughes ","Edwards ","Hill ","Moore ","Clark ","Harrison ",
+    		"Scott ","Young ","Morris ","Hall ","Ward ","Turner ","Carter ","Phillips ","Mitchell ",
+    		"Patel ","Adams ","Campbell ","Anderson ","Allen ","Cook ","Bailey ","Parker ","Miller ",
+    		"Davis ","Murphy ","Price ","Bell ","Baker ","Griffiths ","Kelly ","Simpson ","Marshall ",
+    		"Collins ","Bennett ","Cox ","Richardson ","Fox ","Gray ","Rose ","Chapman ","Hunt ",
+    		"Robertson ","Shaw ","Reynolds ","Lloyd ","Ellis ","Richards ","Russell ","Wilkinson ",
+    		"Khan ","Graham ","Stewart ","Reid ","Murray ","Powell ","Palmer ","Holmes ","Rogers ",
+    		"Stevens ","Walsh ","Hunter ","Thomson ","Matthews ","Ross ","Owen ","Mason ","Knight ",
+    		"Kennedy ","Butler ","Saunders ","Cole ","Pearce ","Dean ","Foster ","Harvey ","Hudson ",
+    		"Gibson ","Mills ","Berry ","Barnes ","Pearson ","Kaur ","Booth ","Dixon ","Grant ","Gordon ",
+    		"Lane ","Harper ","Ali ","Hart ","Mcdonald ","Brooks ","Ryan ","Carr ","Macdonald ",
+    		"Hamilton ","Johnston ","West ","Gill ","Dawson ","Armstrong ","Gardner ","Stone ","Andrews ",
+    		"Williamson ","Barker ","George ","Fisher ","Cunningham ","Watts ","Webb ","Lawrence ",
+    		"Bradley ","Jenkins ","Wells ","Chambers ","Spencer ","Poole ","Atkinson ","Lawson "};
+    static String[] articles={"A","The","For", "","",""};
+    static String[] adjectives={"Yello","Three","Angry", "Red", "Green", "Flying", "Sailing", "Turbulent", "Windy", "Hamilton's", "Wendy's", "Forest", "Orange", 
+    "Tyrant", "Turtle Shell", "Handmade", "Crazy", "Ambitious", "Journeyman", "Spiteful", "Authentic", "Fragrent","Small",
+    "Angstful", "Horrid", "Wonderful", "Amazing","Flowing","Clockwork","", "", "", "", "", "", "", "","Hadrian's","Carl's","Serra's",
+    "Hatter's", "Cobbling", "Eternal", "Beautiful", "Heretic", "Lime", "Spooky", "Vengeful", "Meandering", "Pointless", "Sad", "Golden","","","",""};
+    static String[] objects = {"Book","Clock", "House","People","Car", "Girl", "Boy", "Mage", "Sorceror","King", "Soldier", "Knife","Sword","Dragon", "Enterprise",
+    "Journey", "Quest","Marines", "School", "","", "","", "Venom", "Tornado", "Toad", "Spider", "Horse", "Star", "Kingdom", "Heir",
+    "Trinket", "Eye", "Goblin", "Farm", "Town","Wing", "Wind", "Sea","Citadel","Secret", "Hobbit", "Squirell", "Tin Cup", "Lemon", "", "Storm",
+    "Blizzard", "Dryad", "Jungles", "Witch", "Assassin", "Blade", "Empire", "Terrace", "Peach", "Arrow","Ranger","Tempest", "Bowl","Wasp", "Needle",
+    "Traveler", "Miasma", "Flame", "Fire", "Mountain", "Plain", "Island","","", "Burden", "Tower","Beach","Frost", "Witch Hunter", "Demon", "Prince",
+    "High Mage", "Hat", "Cat", "Shoemaker", "Spirit", "Song", "Temple", "Reality","Void", "Existence","","","",""};
+
+    
+    /*******************************************************************************************
+     * Adding relation to Schema.
+     * @param name        the name of the table
+     * @param attribute   the array of attributes
+     * @param domain      the array of domains
+     * @param primaryKey  the array of primary keys
+     * @param foriegnKey  the array of foriegn keys
+     */
+    public void addRelSchema (String name, String [] attribute, String [] domain,
+                              String [] primaryKey, String [][] foreignKey)
+    {
+        tableIndex.put (counter, name);
+        tableAttr.put (name, attribute);
+        tableDomain.put (name, domain);
+        tablepks.put (name, primaryKey);
+        tablefks.put (name, foreignKey);
+        counter++;
+    } // addRelSchema
+    
+    /*******************************************************************************************
+     * Adding relation to Schema.  Convenience method.
+     * @param name        the name of the table
+     * @param attribute   the string embedding the table's attributes
+     * @param domain      the string embedding the table's domains
+     * @param primaryKey  the string embedding the table's primary keys
+     * @param foriegnKey  the array of foriegn keys
+     */
+    public void addRelSchema (String name, String attribute, String domain,
+                              String primaryKey, String [][] foreignKey)
+    {
+        addRelSchema (name, attribute.split (" "), domain.split (" "),
+                      primaryKey.split (" "), foreignKey);
+    } // addRelSchema
+    
+    public static String makeTitles(){
+    	int randomArt = new Random().nextInt(articles.length);
+    	String article = articles[randomArt];
+    	int randomAdj = new Random().nextInt(adjectives.length);
+    	String adj = adjectives[randomAdj];
+    	int randomObj = new Random().nextInt(objects.length);
+    	String object = objects[randomObj];
+    	String Title ="";
+    	if(adj!=""){
+    		Title = article+" "+ adj+" "+object;
+    	}
+    	else{
+    		Title = article+" "+object;
+    	}
+    	return Title;
+    	
+    }
+
+
+    /***********************************************************************************
+     * Generates random tuples that satisfy all the integrity constraints.
+     * @param tuples  the number of tuples for each table
+     * @return  tempResult contains tuples for all the tables in the order they were added
+     */
+    public Comparable [][][] generate (int [] tuples)
+    {
+        Random        rand      = new Random ();
+        String        tableName = "";
+        String []     attribute;
+        String []     domain;
+        String []     pks;
+        String [][]   fks;
+        Set <String>  pKeys      = new HashSet <String> ();
+        Set <Comparable <?>>  pKeyValues = new HashSet <Comparable <?>> ();
+        Set <String>  fKeys      = new HashSet <String> ();
+        List <String> fkIndex    = new ArrayList <String> ();
+        int           iVal;
+        String        sVal;
+        double        dVal;
+        boolean		  bVal;
+
+        for (int i = 0; i < tuples.length; i++) {
+            tableName = tableIndex.get (i);
+            attribute = tableAttr.get (tableName);
+            domain    = tableDomain.get (tableName);
+            pks       = tablepks.get (tableName);
+            fks       = tablefks.get (tableName);
+            Comparable [][] subResult = new Comparable [tuples [i]][attribute.length];
+
+            // out.println (tableName);
+            for (int n = 0; n < pks.length; n++) pKeys.add (pks [n]);
+
+            //----------------------------------------------------
+            // Handle the case where the table has no foreign keys
+
+            if (fks == null) {
+                for (int j = 0; j < tuples[i]; j++) {
+                    for (int k = 0; k < attribute.length; k++) {
+                        if (pKeys.contains (attribute[k])) {  // key requires uniqueness
+
+                            switch (domain[k]) {
+                            case "Integer":
+                                for (iVal = rand.nextInt (1000000); pKeyValues.contains (iVal);
+                                     iVal = rand.nextInt (1000000));
+                                subResult[j][k] = iVal;
+                                pKeyValues.add (iVal);
+                                break;
+                            case "String":
+                                for (sVal = attribute[k] + rand.nextInt (1000000); pKeyValues.contains(sVal);
+                                     sVal = attribute[k] + rand.nextInt (1000000));
+                                subResult[j][k] = sVal;
+                                pKeyValues.add (sVal);
+                                break;
+                            case "Double":
+                            	for(iVal = rand.nextInt(20); pKeyValues.contains(iVal);
+                            			iVal = rand.nextInt(20));
+                            	subResult[j][k] = iVal;
+                            	pKeyValues.add(iVal);
+                                /*for (dVal = rand.nextInt (1000000) * rand.nextDouble (); pKeyValues.contains( dVal);
+                                     dVal = rand.nextInt (1000000) * rand.nextDouble ());
+                                subResult[j][k] = dVal;
+                                pKeyValues.add (dVal);
+                                */
+                                break;
+                            case "Boolean":
+                            	for(bVal = rand.nextBoolean(); pKeyValues.contains(bVal);
+                            			bVal = rand.nextBoolean());
+                            	subResult[j][k] = bVal;
+                            	pKeyValues.add(bVal);
+                            	break;
+                            case "Short":
+                            	for (iVal = rand.nextInt (10); pKeyValues.contains (iVal);
+                                        iVal = rand.nextInt (10));
+                                   subResult[j][k] = iVal;
+                                   pKeyValues.add (iVal);
+                                   break;
+                            case "Long":
+                            	for (iVal = rand.nextInt (1000); pKeyValues.contains (iVal);
+                                        iVal = rand.nextInt (1000));
+                                   subResult[j][k] = iVal;
+                                   pKeyValues.add (iVal);
+                                   break;
+                            case "Category":
+                            	for(sVal = categories[rand.nextInt(10)]; pKeyValues.contains (sVal);
+                            			sVal = categories[rand.nextInt(10)]);
+                            	subResult[j][k] = sVal;
+                            	pKeyValues.add(sVal);
+                            	break;
+                            case "Name":
+                            	for(sVal = firstNames[rand.nextInt(firstNames.length)].concat(lastNames[rand.nextInt(lastNames.length)]); 
+                            			pKeyValues.contains(sVal); sVal = firstNames[rand.nextInt(firstNames.length)].concat(lastNames[rand.nextInt(lastNames.length)]));
+                            	subResult[j][k] = sVal;
+                            	pKeyValues.add(sVal);
+                            	break;
+                            case "Title":
+                            	for(sVal = makeTitles(); pKeyValues.contains(sVal); sVal = makeTitles());
+                            	subResult[j][k] = sVal;
+                            	pKeyValues.add(sVal);
+                            	break;
+                            default:
+                                throw new IllegalArgumentException("Invalid type in switch: " + domain[k]);
+                            } // switch
+
+                        } else {  // non-key does not require uniqueness
+
+                            switch (domain[k]) {
+                            case "Integer":
+                                subResult[j][k] = rand.nextInt(1000000); break;
+                            case "String":
+                                subResult[j][k] = attribute [k] + rand.nextInt (1000000); break;
+                            case "Double":
+                                subResult[j][k] = rand.nextInt (20); break;
+                            case "Boolean":
+                            	subResult[j][k] = rand.nextBoolean(); break;
+                            case "Short":
+                            	subResult[j][k] = rand.nextInt(10) + 1; break;
+                            case "Long":
+                            	subResult[j][k] = rand.nextInt(1000) + 1; break;
+                            case "Category":
+                            	subResult[j][k] = categories[rand.nextInt(10)]; break;
+                            case "Name":
+                            	subResult[j][k] = firstNames[rand.nextInt(firstNames.length)].concat(lastNames[rand.nextInt(lastNames.length)]); break;
+                            case "Title":
+                            	for(sVal = makeTitles(); (sVal == "   " || sVal == "     "); sVal = makeTitles());
+                            	subResult[j][k] = sVal; break;
+                            default:
+                                throw new IllegalArgumentException("Invalid type in switch: " + domain[k]);
+                            } // switch
+
+                        } // if
+                    } // for
+                } // for
+
+            //-------------------------------------------------
+            // Handle the case where the table has foreign keys (maintain referential integrity)
+
+            } else {
+                for (int j = 0; j < tuples[i]; j++) {
+                    for (int n = 0; n < fks.length; n++) {
+
+                        if ( ! fks[n][0].contains (" ")) {
+                            fkIndex.add (n, fks[n][0]);
+                            Comparable [][] fkTable = result.get (fks[n][1]);
+                            int s;
+                            for (s = 0; s < attribute.length; s++) {
+                                if (attribute[s].equals (fks[n][0])) break;
+                            } // for
+                            String[] tempAtr = tableAttr.get(fks[n][1]);
+                            int x;
+                            for (x = 0; x < tempAtr.length; x++) {
+                                if (tempAtr[x].equals (fks[n][2])) break;
+                            } // for
+                            subResult[j][s] = fkTable[rand.nextInt (fkTable.length)][x];
+
+                        } else {
+                            String [] sfks = fks[n][0].split (" ");
+                            String [] rfks = fks[n][2].split (" ");
+                            for (int z = 0; z < fks[n][0].split (" ").length; z++) {
+                                fkIndex.add (n+z, fks[n][0].split (" ")[z]);
+                            } // for
+                            Comparable [][] fkTable = result.get (fks[n][1]);
+                            if (fkTable == null) {
+                                out.println ("Foreign Key Error: table containing referencing key cannot be populated before referenced table");
+                                out.println ("Possible Solution: Add '" + fks[n][1] + "' table before adding '" + tableName + "' table.");
+                                System.exit (0);
+                            } // if
+                            int t = rand.nextInt (fkTable.length);
+                            for (int a = 0; a < sfks.length; a++) {
+                                int b;
+                                for (b = 0; b < attribute.length; b++) {
+                                    if (attribute[b].equals (sfks[a])) break;
+                                } // for
+                                String [] tempAtr = tableAttr.get (fks[n][1]);
+                                int c;
+                                for (c = 0; c < tempAtr.length; c++) {
+                                    if (tempAtr[c].equals (rfks[a])) break;
+                                } // for
+                                subResult[j][b] = fkTable[t][c];
+                            } // for
+                        } // if
+                    } // for
+
+                    for (int k = 0; k < attribute.length; k++) {
+                        if ( ! fkIndex.contains (attribute[k])) {
+                            if (pKeys.contains (attribute[k])) {
+
+                                switch (domain[k]) {
+                                case "Integer":
+                                    for (iVal = rand.nextInt (1000000); pKeyValues.contains (iVal);
+                                         iVal = rand.nextInt (1000000));
+                                    subResult[j][k] = iVal;
+                                    pKeyValues.add (iVal);
+                                    break;
+                                case "String":
+                                    for (sVal = attribute[k] + rand.nextInt (1000000); pKeyValues.contains (sVal);
+                                         sVal = attribute[k] + rand.nextInt (1000000));
+                                    subResult[j][k] = sVal;
+                                    pKeyValues.add (sVal);
+                                    break;
+                                case "Double":
+                                	for(iVal = rand.nextInt(20); pKeyValues.contains(iVal);
+                                			iVal = rand.nextInt(20));
+                                	subResult[j][k] = iVal;
+                                	pKeyValues.add(iVal);
+                                	/*
+                                    for (dVal = rand.nextInt (1000000) * rand.nextDouble (); pKeyValues.contains (dVal);
+                                         dVal = rand.nextInt (1000000) * rand.nextDouble ());
+                                    subResult[j][k] = dVal;
+                                    pKeyValues.add (dVal);
+                                    */
+                                    break;
+                                case "Boolean":
+                                	for (bVal = rand.nextBoolean(); pKeyValues.contains (bVal);
+                                			bVal = rand.nextBoolean());
+                                	subResult[j][k] = bVal;
+                                	pKeyValues.add(bVal);
+                                	break;
+                                case "Short":
+                                	for(iVal = rand.nextInt(10); pKeyValues.contains(iVal);
+                                			iVal = rand.nextInt(10));
+                                	subResult[j][k] = iVal;
+                                	pKeyValues.add(iVal);
+                                	break;
+                                case "Long":
+                                	for(iVal = rand.nextInt(1000); pKeyValues.contains(iVal);
+                                			iVal = rand.nextInt(1000));
+                                	subResult[j][k] = iVal;
+                                	pKeyValues.add(iVal);
+                                	break;
+                                case "Category":
+                                	for(sVal = categories[rand.nextInt(10)]; pKeyValues.contains (sVal);
+                                			sVal = categories[rand.nextInt(10)]);
+                                	subResult[j][k] = sVal;
+                                	pKeyValues.add(sVal);
+                                	break;
+                                case "Name":
+                                	for(sVal = firstNames[rand.nextInt(firstNames.length)].concat(lastNames[rand.nextInt(lastNames.length)]); 
+                                			pKeyValues.contains(sVal); sVal = firstNames[rand.nextInt(firstNames.length)].concat(lastNames[rand.nextInt(lastNames.length)]));
+                                	subResult[j][k] = sVal;
+                                	pKeyValues.add(sVal);
+                                	break;
+                                case "Title":
+                                	for(sVal = makeTitles(); pKeyValues.contains(sVal); sVal = makeTitles() );
+                                	subResult[j][k] = sVal;
+                                	pKeyValues.add(sVal);
+                                	break;
+                                default:
+                                    throw new IllegalArgumentException("Invalid type in switch: " + domain[k]);
+                                } // if
+
+                            } else {
+
+                                switch (domain[k]) {
+                                case "Integer":
+                                    subResult[j][k] = rand.nextInt (1000000); break;
+                                case "String":
+                                    subResult[j][k] = attribute [k] + rand.nextInt (1000000); break;
+                                case "Double":
+                                    subResult[j][k] = rand.nextInt (20); break;
+                                case "Boolean":
+                                	subResult[j][k] = rand.nextBoolean(); break;
+                                case "Short":
+                                	subResult[j][k] = rand.nextInt(10) + 1; break;
+                                case "Long":
+                                	subResult[j][k] = rand.nextInt(1000) + 1; break;
+                                case "Category":
+                                	subResult[j][k] = categories[rand.nextInt(10)]; break;
+                                case "Name":
+                                	subResult[j][k] = firstNames[rand.nextInt(firstNames.length)].concat(lastNames[rand.nextInt(lastNames.length)]); break;
+                                case "Title":
+                                	for(sVal = makeTitles(); (sVal == "   " || sVal == "     "); sVal = makeTitles());
+                                	subResult[j][k] = sVal; break;
+                                default:
+                                    throw new IllegalArgumentException("Invalid type in switch: " + domain[k]);
+                                } // if
+
+                            } // if
+                        } // if
+                    } // for
+                } // for
+            } // if
+
+            pKeys.clear ();
+            fkIndex.clear ();
+            result.put (tableName, subResult);
+        } // for
+
+        Comparable[][][] tempResult = new Comparable [result.size()][][];
+
+        for (int i = 0; i < result.size (); i++) {
+            tableName = tableIndex.get (i);
+            Comparable [][] subTable = result.get (tableName);
+            tempResult [i] = subTable;
+        } // for
+
+        return tempResult;
+    } // generate
+
+} // TestGeneratorImpl class
