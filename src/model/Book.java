@@ -1,50 +1,60 @@
 package model;
 
 public class Book {
-	private String name;
-	private String title;
+	private String isbn;
 	private String author;
-	private int pages;
-	
-	public Book(String name, String title, String author, int pages) {
-		setName(name);
-		setTitle(title);
-		setAuthor(author);
-		setPages(pages);
-	}
+	private String genre;
+	private String title;
+	private String format;
+	private int copiesAvailable;
+	private int shelf;
 	
 	public Book() {}
 	
-	public String getName() {
-		return name;
+	public String getIsbn() {
+		return isbn;
 	}
-	
-	public void setName(String name) {
-		this.name = name;
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
 	}
-	
-	public String getTitle() {
-		return title;
-	}
-	
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	
 	public String getAuthor() {
 		return author;
 	}
-	
 	public void setAuthor(String author) {
 		this.author = author;
 	}
-	
-	public int getPages() {
-		return pages;
+	public String getGenre() {
+		return genre;
+	}
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getFormat() {
+		return format;
+	}
+	public void setFormat(String format) {
+		this.format = format;
+	}
+	public int getCopiesAvailable() {
+		return copiesAvailable;
+	}
+	public void setCopiesAvailable(int copiesAvailable) {
+		this.copiesAvailable = copiesAvailable;
+	}
+	public int getShelf() {
+		return shelf;
+	}
+	public void setShelf(int shelf) {
+		this.shelf = shelf;
 	}
 	
-	public void setPages(int pages) {
-		this.pages = pages;
-	}
+	
+	
 	
 }

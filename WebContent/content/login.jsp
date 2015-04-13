@@ -7,16 +7,13 @@
 	<h3>Welcome User, please login below</h3>
 	<form class="form-horizontal" method="post" action="login">
 		<div class="form-group">
-			<label for="email" class="col-sm-1 control-label">Email</label>
-			<div class="col-sm-11">
-				<s:textfield name="name" id="email" required="true" placeholder="Enter email"/>
-				
+			<div class="col-sm-3">
+				<s:textfield class="form-control" name="user" id="email" required="true" placeholder="Enter email"/>
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="pw" class="col-sm-1 control-label">Password</label>
-			<div class="col-sm-11">
-				<s:password name="pwd" id="pw" placeholder="Enter password" required="true"/>				
+			<div class="col-sm-3">
+				<s:password class="form-control" name="pwd" id="pw" placeholder="Enter password" required="true"/>				
 			</div>
 		</div>
 		<div class="form-group">

@@ -1,34 +1,22 @@
 package action;
 
+import model.User;
 import com.opensymphony.xwork2.Action;
 
 public class LoginAction implements Action {
+	private User user = new User();
+	
 	@Override
 	public String execute() throws Exception {
-		if ("alex".equals(getName()) && "admin".equals(getPwd())) {
-			return "SUCCESS";
-		} else {
-			return "ERROR";
-		}
+		// check email/pw in database
+		return "SUCCESS";
 	}
 
-	private String name;
-	private String pwd;
+	public String getUser() {
+		return user.getEmail();
+	}
 	
-	public void setName(String name) {
-		this.name = name;
+	public void setUser(String email) {
+		user.setEmail(email);
 	}
-
-	public void setPwd(String pwd) {
-		this.pwd = pwd;
-	}
-
-	public String getPwd() {
-		return pwd;
-	}
-
-	public String getName() {
-		return name;
-	}
-
 }

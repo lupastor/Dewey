@@ -3,15 +3,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="../lib/bootstrap-3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="../lib/bootstrap-3.3.4/css/bootstrap.min.css">
 <link rel="stylesheet" href="../resource/footer.css">
 </head>
 <body>
 	<div id="wrap">
 		<div class="container">
-			<div class="text-center">
-				<h2>Header options will go here</h2>
-			</div>
+			<nav class="navbar navbar-default">
+				<div class="container-fluid">
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="login.jsp" class="btn btn-default">LogIn</a></li>
+					</ul>
+				</div>
+			</nav>
 		</div>
 		<div class="container">
 			<div id="body">
@@ -22,7 +27,7 @@
 
 	<div id="footer">
 		<div class="container text-center">
-			<br/>
+			<br />
 			<p class="text-muted">Created by Alex, Daniel, Luana and Ritche</p>
 		</div>
 	</div>
